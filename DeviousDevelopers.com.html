@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devious Developers</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary-red: #ff0000;
+  --primary-orange: #ff7f00;
+  --primary-yellow: #ffff00;
+  --primary-green: #00ff00;
+  --primary-blue: #0000ff;
+  --primary-purple: #8b00ff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* 3D Entrance Overlay */
+#entrance-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease-out, visibility 1s ease-out;
+  background: rgba(0, 0, 0, 1);
+}
+
+#entrance-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#entrance-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.entrance-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.entrance-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 700;
+  color: #ff0000;
+  text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+  margin-bottom: 30px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+  50% { transform: scale(1.05); text-shadow: 0 0 50px rgba(255, 0, 0, 1); }
+}
+
+.entrance-button {
+  background: linear-gradient(45deg, #ff0000, #ff7f00);
+  border: none;
+  padding: 20px 40px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Baloo 2', cursive;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+.entrance-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 40px rgba(255, 0, 0, 1);
+}
+
+.entrance-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease;
+}
+
+.entrance-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Main site styles */
+body {
+  font-family: 'Baloo 2', cursive;
+  background: #111;
+  color: white;
+  scroll-behavior: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.entrance-active {
+  overflow: hidden;
+}
+
+/* Enhanced background with better performance */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: linear-gradient(-45deg, #1e90ff, #32cd32, #ff1493, #ffd700);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  will-change: background-position;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+body.entrance-active::before {
+  opacity: 0;
+}
+
+@keyframes gradientBG {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Navigation */
+nav {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 15px;
+  background: rgba(0,0,0,0.7);
+  padding: 10px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+nav a:hover {
+  background: linear-gradient(45deg, var(--primary-red), var(--primary-orange));
+  transform: scale(1.05);
+}
+
+/* Section styling */
+section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  position: relative;
+}
+
+/* Enhanced glowing headers */
+h1, h2 {
+  text-align: center;
+  padding: 20px 40px;
+  border-radius: 25px;
+  background: linear-gradient(270deg, var(--primary-red), var(--primary-orange), var(--primary-yellow), var(--primary-green), var(--primary-blue), var(--primary-purple));
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textGradient 8s linear infinite;
+  position: relative;
+  margin-bottom: 40px;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: white;
+}
+
+@supports not (background-clip: text) {
+  h1, h2 {
+    background: none;
+    color: #ff6b35;
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+  }
+}
+
+h1::before, h2::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--primary-red), var(--primary-orange), var(--primary-yellow), var(--primary-green));
+  border-radius: 25px;
+  z-index: -1;
+  opacity: 0.8;
+}
+
+h1 { font-size: clamp(3rem, 8vw, 6rem); }
+h2 { font-size: clamp(2rem, 6vw, 4rem); }
+
+@keyframes textGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Logo with improved animation */
+.logo {
+  width: min(400px, 80vw);
+  margin: 40px 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 0 20px rgba(255,0,0,0.8));
+}
+
+.logo:hover {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 30px rgba(255,0,0,1));
+}
+
+/* Social buttons */
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  max-width: 1000px;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-icon {
+  width: 160px;
+  height: 160px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.btn:hover .btn-icon::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn img {
+  width: 60%;
+  height: 60%;
+  transition: transform 0.5s ease;
+  z-index: 1;
+  position: relative;
+}
+
+.btn:hover img {
+  transform: rotate(360deg) scale(1.1);
+}
+
+.btn-label {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.youtube .btn-icon { background: linear-gradient(135deg, #FF0000, #CC0000); }
+.x .btn-icon { background: linear-gradient(135deg, #1DA1F2, #0d8bd9); }
+.tiktok .btn-icon { background: linear-gradient(135deg, #000, #333); }
+.discord .btn-icon { background: linear-gradient(135deg, #5865F2, #4752C4); }
+.instagram .btn-icon { background: linear-gradient(135deg, #E1306C, #F56040, #FFDC80); }
+
+/* Content sections */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+  color: var(--primary-orange);
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.card p {
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* Achievement subtitle */
+.achievement-subtitle {
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--primary-yellow);
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+/* Original sparkly cursor trail */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 20px 10px red;
+}
+
+.spark {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.8;
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* Copy notification */
+.copy-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(45deg, var(--primary-green), var(--primary-blue));
+  color: white;
+  padding: 20px 40px;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  z-index: 10000;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.copy-notification.show {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Volume Slider */
+.volume-control {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.8);
+  padding: 15px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.volume-control:hover {
+  background: rgba(0,0,0,0.9);
+  border-color: var(--primary-orange);
+}
+
+.volume-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  filter: invert(1);
+  transition: all 0.3s ease;
+}
+
+.volume-icon:hover {
+  filter: invert(0.7) sepia(1) saturate(3) hue-rotate(15deg);
+}
+
+.volume-slider {
+  width: 100px;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--primary-orange), var(--primary-red));
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,127,0,0.6);
+  transition: all 0.3s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 15px rgba(255,127,0,1);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--primary-orange), var(--primary-red));
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(255,127,0,0.6);
+}
+
+/* Footer */
+footer {
+  background: rgba(0,0,0,0.8);
+  padding: 40px 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: float 8s linear infinite;
+}
+
+@keyframes float {
+  from {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(to right, var(--primary-red), var(--primary-orange), var(--primary-yellow));
+  z-index: 10000;
+  transition: width 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .entrance-title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+  }
+  
+  .entrance-button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+  }
+  
+  nav {
+    top: 10px;
+    right: 10px;
+    padding: 8px 15px;
+  }
+  
+  nav a {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .buttons {
+    gap: 20px;
+  }
+  
+  .btn-icon {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .btn-label {
+    font-size: 0.9rem;
+  }
+  
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .volume-control {
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  
+  .volume-slider {
+    width: 80px;
+  }
+  
+  .volume-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-icon {
+    width: 140px;
+    height: 140px;
+  }
+}
+</style>
+</head>
+<body class="entrance-active">
+  <!-- 3D Entrance Overlay -->
+  <div id="entrance-overlay">
+    <canvas id="entrance-canvas"></canvas>
+    <div class="entrance-content">
+      <h1 class="entrance-title" style="color: #ffffff !important; background: none !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff, 0 0 60px #ff7f00 !important;">DEVIOUS DEVELOPERS</h1>
+      <button class="entrance-button" onclick="enterSite()">ENTER DEVIOUS DEVS?</button>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" id="scrollIndicator"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#hero">Home</a>
+    <a href="#about">About</a>
+    <a href="#achievements">Achievements</a>
+    <a href="#projects">Projects</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <h1>Devious Developers</h1>
+    <img src="https://i.imgur.com/qYg2H47.png" alt="Devious Logo" class="logo" id="mainLogo">
+    
+    <div class="buttons">
+      <a href="https://www.youtube.com/@DeviousDevsInc" target="_blank" class="btn youtube">
+        <div class="btn-icon">
+          <img src="https://i.imgur.com/opGn8HA.png" alt="YouTube">
+        </div>
+        <div class="btn-label">YouTube</div>
+      </a>
+      <a href="https://x.com/Devious_Devs" target="_blank" class="btn x">
+        <div class="btn-icon">
+          <img src="https://i.imgur.com/qfMfbNp.png" alt="X">
+        </div>
+        <div class="btn-label">X (Twitter)</div>
+      </a>
+      <a href="https://www.tiktok.com/@deviousdevelopers" target="_blank" class="btn tiktok">
+        <div class="btn-icon">
+          <img src="https://i.imgur.com/EhfTGZ4.png" alt="TikTok">
+        </div>
+        <div class="btn-label">TikTok</div>
+      </a>
+      <a href="https://discord.gg/vAdK5DMuHu" target="_blank" class="btn discord">
+        <div class="btn-icon">
+          <img src="https://i.imgur.com/vR7ghx9.png" alt="Discord">
+        </div>
+        <div class="btn-label">Discord</div>
+      </a>
+      <a href="https://www.instagram.com/deviousdevelopers" target="_blank" class="btn instagram">
+        <div class="btn-icon">
+          <img src="https://i.imgur.com/kKU4foj.png" alt="Instagram">
+        </div>
+        <div class="btn-label">Instagram</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <h2>About Us</h2>
+    <div class="content-grid">
+      <div class="card">
+        <h3>Our Mission</h3>
+        <p>To create immersive, terrifying, and unforgettable horror experiences that everyone can enjoy (and maybe lose sleep over).</p>
+      </div>
+      <div class="card">
+        <h3>What We Do</h3>
+        <p>We're all about building high-quality horror games, dropping devlogs, and cooking up all kinds of horror entertainment.</p>
+      </div>
+      <div class="card">
+        <h3>Background</h3>
+        <p>We started out as horror game devs on another platform, where we dropped four original DeviousDevs horror games. Now we've upgraded—building in Unreal Engine and taking things way further.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section id="achievements">
+    <h2>Achievements</h2>
+    <div class="achievement-subtitle" id="achievementSubtitle">
+      Since launching DeviousDevelopers on Sept 17, 2023, we've:
+    </div>
+    <div class="content-grid">
+      <div class="card">
+        <h3>500K+ Downloads</h3>
+        <p>Reached over half a million players on our past platform.</p>
+      </div>
+      <div class="card">
+        <h3>Carnegie Mellon University</h3>
+        <p>Built a connection with Carnegie Mellon University (yep, they actually support our game design work).</p>
+      </div>
+      <div class="card">
+        <h3>NewsPaper</h3>
+        <p>Got featured in a newspaper release all about one of our original horror projects.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects">
+    <h2>Our Projects</h2>
+    <div class="content-grid">
+      <div class="card">
+        <h3>Game Development</h3>
+        <p>Right now, we've got 3 large-scale horror projects in the works. On top of that, 4 smaller practice projects are in development, sharpening our skills to push the quality even higher.</p>
+      </div>
+      <div class="card">
+        <h3>Content Creation</h3>
+        <p>And we're not just about games—our YouTube is stacked with challenges, devlogs, and extra content to give you a peek behind the deviousness.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Devious Developers. Built with passion and lots of caffeine.</p>
+  </footer>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Copy notification -->
+  <div class="copy-notification" id="copyNotification">Link Copied!</div>
+
+  <!-- Volume Control -->
+  <div class="volume-control">
+    <svg class="volume-icon" id="volumeIcon" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    </svg>
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+  </div>
+
+  <!-- Background Audio -->
+  <audio id="backgroundMusic" loop>
+    <source src="https://cdn.discordapp.com/attachments/1084916898845692025/1412593857337491466/You_Can_Always_Come_Home.mp3?ex=68b8dc0c&is=68b78a8c&hm=43c7de943fecb8001ac86f12a27db8a206b3ff77670cbd6dd9c38556b515cb20&" type="audio/mpeg">
+  </audio>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    let scene, camera, renderer, particles;
+    let audioContext, backgroundMusic, volumeSlider, volumeIcon;
+    let audioInitialized = false;
+    let isEntranceActive = true;
+
+    // Initialize 3D Scene
+    function init3DScene() {
+      const canvas = document.getElementById('entrance-canvas');
+      
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+
+      // Create floating horror particles
+      const particleCount = 100;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const velocities = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 20;     // x
+        positions[i + 1] = (Math.random() - 0.5) * 20; // y
+        positions[i + 2] = (Math.random() - 0.5) * 20; // z
+        
+        velocities[i] = (Math.random() - 0.5) * 0.02;
+        velocities[i + 1] = (Math.random() - 0.5) * 0.02;
+        velocities[i + 2] = (Math.random() - 0.5) * 0.02;
+
+        // Red/orange horror colors
+        colors[i] = 1.0;     // R
+        colors[i + 1] = Math.random() * 0.5; // G
+        colors[i + 2] = 0.0; // B
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: 0.1,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+      });
+
+      particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+
+      camera.position.z = 5;
+
+      animate3D();
+    }
+
+    function animate3D() {
+      if (!isEntranceActive) return;
+      
+      requestAnimationFrame(animate3D);
+
+      const positions = particles.geometry.attributes.position.array;
+      const velocities = particles.geometry.attributes.velocity.array;
+
+      for (let i = 0; i < positions.length; i += 3) {
+        positions[i] += velocities[i];
+        positions[i + 1] += velocities[i + 1];
+        positions[i + 2] += velocities[i + 2];
+
+        // Boundary check
+        if (Math.abs(positions[i]) > 10) velocities[i] *= -1;
+        if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -1;
+        if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -1;
+      }
+
+      particles.geometry.attributes.position.needsUpdate = true;
+      particles.rotation.y += 0.001;
+
+      renderer.render(scene, camera);
+    }
+
+    // Enter site function
+    function enterSite() {
+      if (!audioInitialized) {
+        initAudio();
+        audioInitialized = true;
+      }
+
+      isEntranceActive = false;
+      const overlay = document.getElementById('entrance-overlay');
+      overlay.classList.add('hidden');
+      document.body.classList.remove('entrance-active');
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 1000);
+    }
+
+    // Audio initialization
+    function initAudio() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      backgroundMusic = document.getElementById('backgroundMusic');
+      volumeSlider = document.getElementById('volumeSlider');
+      volumeIcon = document.getElementById('volumeIcon');
+      
+      // Start background music
+      backgroundMusic.volume = volumeSlider.value / 100;
+      backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+    }
+
+    // Sound effect generator
+    function playSound(frequency, type = 'sine', duration = 0.1, volume = 0.3) {
+      if (!audioContext) return;
+      
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = type;
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    }
+
+    // Volume control
+    function setupVolumeControl() {
+      volumeSlider.addEventListener('input', (e) => {
+        const volume = e.target.value / 100;
+        if (backgroundMusic) {
+          backgroundMusic.volume = volume;
+        }
+        
+        // Update volume icon based on volume level
+        if (volume === 0) {
+          volumeIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+        } else if (volume < 0.5) {
+          volumeIcon.innerHTML = '<path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/>';
+        } else {
+          volumeIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+        }
+      });
+      
+      // Mute/unmute on icon click
+      volumeIcon.addEventListener('click', () => {
+        if (backgroundMusic.volume === 0) {
+          backgroundMusic.volume = volumeSlider.value / 100;
+        } else {
+          backgroundMusic.volume = 0;
+        }
+        volumeSlider.value = backgroundMusic.volume * 100;
+      });
+    }
+
+    // Add sound effects to interactive elements
+    function setupSoundEffects() {
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          playSound(440, 'sine', 0.1, 0.2);
+        });
+        btn.addEventListener('click', () => {
+          playSound(880, 'square', 0.15, 0.3);
+        });
+      });
+      
+      document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('mouseenter', () => {
+          playSound(330, 'sine', 0.08, 0.15);
+        });
+        link.addEventListener('click', () => {
+          playSound(660, 'triangle', 0.12, 0.25);
+        });
+      });
+      
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          playSound(220, 'sine', 0.06, 0.1);
+        });
+      });
+    }
+
+    // Logo click to copy URL
+    function setupLogo() {
+      const mainLogo = document.getElementById('mainLogo');
+      const copyNotification = document.getElementById('copyNotification');
+      
+      mainLogo.addEventListener('click', async () => {
+        // Play devious sound sequence
+        playSound(220, 'sawtooth', 0.1, 0.4);
+        setTimeout(() => playSound(330, 'square', 0.1, 0.3), 100);
+        setTimeout(() => playSound(440, 'triangle', 0.15, 0.5), 200);
+        
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          copyNotification.classList.add('show');
+          setTimeout(() => {
+            copyNotification.classList.remove('show');
+          }, 2000);
+        } catch (err) {
+          console.log('Copy failed');
+        }
+      });
+      
+      mainLogo.addEventListener('mouseenter', () => {
+        playSound(165, 'sine', 0.2, 0.3);
+      });
+    }
+
+    // Calculate time since launch
+    function updateTimeSinceLaunch() {
+      const launchDate = new Date('2023-09-17');
+      const now = new Date();
+      const diffTime = Math.abs(now - launchDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const years = Math.floor(diffDays / 365);
+      const remainingDays = diffDays % 365;
+      
+      let timeText = "";
+      if (years > 0) {
+        timeText = `${years} year${years > 1 ? 's' : ''} and ${remainingDays} day${remainingDays !== 1 ? 's' : ''}`;
+      } else {
+        timeText = `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+      }
+      
+      document.getElementById('achievementSubtitle').textContent = `Since launching DeviousDevelopers ${timeText} ago, we've:`;
+    }
+
+    // Sparkly cursor trail
+    function setupCursor() {
+      const cursor = document.getElementById('cursor');
+      let t = 0;
+      
+      document.addEventListener('mousemove', (e) => {
+        cursor.style.top = e.clientY - cursor.offsetHeight/2 + 'px';
+        cursor.style.left = e.clientX - cursor.offsetWidth/2 + 'px';
+        
+        // Color cycling effect
+        t += 0.05;
+        const hue = 15 + 30 * Math.sin(t);
+        cursor.style.background = `radial-gradient(circle, hsl(${hue}, 100%, 50%) 0%, hsl(${hue + 10}, 100%, 50%) 100%)`;
+        cursor.style.boxShadow = `0 0 20px 10px hsl(${hue}, 100%, 50%)`;
+        
+        // Create spark trail
+        for (let i = 0; i < 3; i++) {
+          const spark = document.createElement('div');
+          spark.className = 'spark';
+          spark.style.top = e.clientY + 'px';
+          spark.style.left = e.clientX + 'px';
+          spark.style.background = `hsl(${hue}, 100%, 50%)`;
+          document.body.appendChild(spark);
+          setTimeout(() => spark.remove(), 500);
+        }
+      });
+
+      // Enhanced hover effects for interactive elements
+      document.querySelectorAll('.btn, .card').forEach(element => {
+        element.addEventListener('mouseenter', () => {
+          cursor.style.transform = 'scale(1.5)';
+        });
+        
+        element.addEventListener('mouseleave', () => {
+          cursor.style.transform = 'scale(1)';
+        });
+      });
+    }
+
+    // Floating particles
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.innerHTML = '✨';
+      particle.style.left = Math.random() * window.innerWidth + 'px';
+      particle.style.fontSize = (Math.random() * 20 + 10) + 'px';
+      particle.style.animationDelay = Math.random() * 2 + 's';
+      document.body.appendChild(particle);
+      
+      setTimeout(() => {
+        if (particle.parentNode) {
+          particle.parentNode.removeChild(particle);
+        }
+      }, 8000);
+    }
+
+    // Scroll indicator
+    function setupScrollIndicator() {
+      const scrollIndicator = document.getElementById('scrollIndicator');
+      window.addEventListener('scroll', () => {
+        const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+        scrollIndicator.style.width = scrolled + '%';
+      });
+    }
+
+    // Smooth scrolling for navigation
+    function setupNavigation() {
+      document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    }
+
+    // Handle window resize for 3D scene
+    function handleResize() {
+      if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+    }
+
+    // Initialize everything when page loads
+    window.addEventListener('load', () => {
+      init3DScene();
+      updateTimeSinceLaunch();
+      setupScrollIndicator();
+      setupNavigation();
+      setupCursor();
+      
+      // Create particles periodically
+      setInterval(createParticle, 2000);
+      
+      // Setup audio controls (but don't init audio until user clicks enter)
+      volumeSlider = document.getElementById('volumeSlider');
+      volumeIcon = document.getElementById('volumeIcon');
+      backgroundMusic = document.getElementById('backgroundMusic');
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', handleResize);
+
+    // Initialize audio and site functionality after entering
+    function initializeSiteFeatures() {
+      setupVolumeControl();
+      setupSoundEffects();
+      setupLogo();
+    }
+
+    // Make enterSite globally available
+    window.enterSite = function() {
+      if (!audioInitialized) {
+        initAudio();
+        initializeSiteFeatures();
+        audioInitialized = true;
+      }
+
+      isEntranceActive = false;
+      const overlay = document.getElementById('entrance-overlay');
+      
+      // Add site-entering class to trigger fade-in
+      document.body.classList.add('site-entering');
+      document.body.classList.remove('entrance-active');
+      
+      // Start hiding the overlay
+      overlay.classList.add('hidden');
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 1000);
+    };
+  </script>
+</body>
+</html>
